@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { Send, Loader } from "lucide-react";
+import { Send, Loader, AlertCircle } from "lucide-react";
 import { Textarea } from "./ui/textarea";
-
 const STARTER_PROMPTS = [
   "Tell me about your background",
   "What are your technical skills?",
@@ -11,11 +10,11 @@ const STARTER_PROMPTS = [
 
 type Message = {
   id: number;
-  sender: "user" | "ai";
+  sender: "user" | "ai" | "error";
   text: string;
 };
 
-const AVATAR_URL = "/lovable-uploads/473b71ec-a02c-410a-9108-4f056685093d.png";
+const AVATAR_URL = "/lovable-uploads/9e54211b-4aa8-4122-aa1d-5ccdc40b6e5c.png"; // new avatar image
 
 const initialMessages: Message[] = [
   {
@@ -25,18 +24,50 @@ const initialMessages: Message[] = [
   },
 ];
 
+// Helper to talk to backend API instead of OpenAI directly
+async function fetchAssistantResponse({
+  userMessages,
+  onStreamChunk,
+}: {
+  userMessages: Message[];
+  onStreamChunk: (chunkText: string) => void;
+}) {
+  // Prepare messages in OpenAI format
+  const mappedMessages = userMessages.map((msg) => ({
+    role: msg.sender === "user" ? "user" : "assistant",
+    content: msg.text,
+  }));
+
+  // Call our backend API (src/API/openai.ts)
+  const resp = await fetch("/api/openai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ messages: mappedMessages }),
+  });
+  if (!resp.ok) {
+    throw new Error("Backend API error");
+  }
+  const data = await resp.json();
+  // No streaming for now (unless you implement it in backend!)
+  onStreamChunk(data.text as string);
+  return data.text;
+}
+
 export default function RishiAIChat() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [inputRows, setInputRows] = useState(1);
   const [showStarterPrompts, setShowStarterPrompts] = useState(true);
+  const [streamedText, setStreamedText] = useState(""); // For partial assistant stream
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, streamedText]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -48,6 +79,31 @@ export default function RishiAIChat() {
       setInputRows(Math.min(rows, 6));
       textareaRef.current.rows = Math.min(rows, 6);
     }
+  };
+
+  const sendToAssistant = async (newUserMsg: Message, historyMessages: Message[]) => {
+    setStreamedText("");
+    try {
+      await fetchAssistantResponse({
+        userMessages: [...historyMessages, newUserMsg],
+        onStreamChunk: (currentText) => {
+          setStreamedText(currentText);
+        },
+      }).then((finalText) => {
+        setMessages((msgs) => [
+          ...msgs,
+          { id: msgs.length + 2, sender: "ai", text: finalText || "(No response)" },
+        ]);
+        setStreamedText("");
+      });
+    } catch (err: any) {
+      setMessages((msgs) => [
+        ...msgs,
+        { id: msgs.length + 2, sender: "error", text: "Error getting response from AI. Please try again!" },
+      ]);
+      setStreamedText("");
+    }
+    setLoading(false);
   };
 
   const handleSend = async () => {
@@ -62,17 +118,8 @@ export default function RishiAIChat() {
     setInputRows(1);
     setLoading(true);
     setShowStarterPrompts(false);
-    setTimeout(() => {
-      setMessages((msgs) => [
-        ...msgs,
-        {
-          id: msgs.length + 1,
-          sender: "ai",
-          text: "Thanks for your message! (This is a placeholder AI response.)",
-        },
-      ]);
-      setLoading(false);
-    }, 1200);
+
+    await sendToAssistant(userMsg, messages);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -83,10 +130,11 @@ export default function RishiAIChat() {
   };
 
   const handlePromptClick = (text: string) => {
+    if (loading) return;
     const userMsg: Message = {
       id: messages.length + 1,
       sender: "user",
-      text: text,
+      text,
     };
     setMessages((msgs) => [...msgs, userMsg]);
     setInput("");
@@ -94,17 +142,7 @@ export default function RishiAIChat() {
     setLoading(true);
     setShowStarterPrompts(false);
 
-    setTimeout(() => {
-      setMessages((msgs) => [
-        ...msgs,
-        {
-          id: msgs.length + 1,
-          sender: "ai",
-          text: "Thanks for your message! (This is a placeholder AI response.)",
-        },
-      ]);
-      setLoading(false);
-    }, 1200);
+    sendToAssistant(userMsg, messages);
   };
 
   useEffect(() => {
@@ -206,7 +244,9 @@ export default function RishiAIChat() {
                 <div
                   key={msg.id}
                   className={`flex mb-4 items-end ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
+                    msg.sender === "user"
+                      ? "justify-end"
+                      : "justify-start"
                   }`}
                 >
                   {msg.sender === "ai" && (
@@ -221,14 +261,36 @@ export default function RishiAIChat() {
                       ${
                         msg.sender === "ai"
                           ? "bg-gray-100 text-black border border-gray-300 rounded-bl-none"
-                          : "bg-black text-white border border-black rounded-br-none"
+                          : msg.sender === "user"
+                          ? "bg-black text-white border border-black rounded-br-none"
+                          : "bg-red-100 text-red-700 border border-red-400 rounded-md"
                       } animate-fade-in`}
                   >
-                    {msg.text}
+                    {msg.sender === "error" ? (
+                      <div className="flex items-center">
+                        <AlertCircle className="w-4 h-4 mr-2 text-red-500" />
+                        <span>{msg.text}</span>
+                      </div>
+                    ) : (
+                      msg.text
+                    )}
                   </div>
                 </div>
               ))}
-              {loading && (
+              {/* Streaming assistant response */}
+              {loading && streamedText && (
+                <div className="flex mb-4 items-end justify-start animate-fade-in">
+                  <img
+                    src={AVATAR_URL}
+                    alt="AI"
+                    className="w-8 h-8 rounded-full border border-gray-300 mr-3"
+                  />
+                  <div className="flex items-center max-w-[75%] px-4 py-3 rounded-xl border border-gray-300 bg-gray-100 text-black rounded-bl-none">
+                    <span>{streamedText}</span>
+                  </div>
+                </div>
+              )}
+              {loading && !streamedText && (
                 <div className="flex mb-4 items-end justify-start animate-fade-in">
                   <img
                     src={AVATAR_URL}
@@ -321,4 +383,4 @@ export default function RishiAIChat() {
   );
 }
 
-// NOTE: This file is 337 lines long. For better maintainability, consider splitting up large components into smaller ones after you're happy with the functionality!
+// NOTE: This file is 337+ lines long. For better maintainability, consider splitting up large components into smaller ones after you're happy with the functionality!
