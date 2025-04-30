@@ -3,5 +3,4 @@ venv
 .DS_store
 frontend/node_modules
 frontend/.env
-backend/node_modules
-backend/.env
+frontend/dist
