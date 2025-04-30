@@ -103,4 +103,4 @@ Rishi AI may log anonymized user queries and responses for continuous improvemen
 - 📧 Email: rishikesh.kakde59@gmail.com
 - 🌐 Website: [rishikeshkakde.framer.website](https://rishikeshkakde.framer.website)
 - 💼 LinkedIn: [linkedin.com/in/rishikeshkakde](https://linkedin.com/in/rishikeshkakde)
-- 🧠 Medium Blog: [Rishi AI Build](https://medium.com/@rkakde/how-i-built-my-alter-ego-in-artificial-intelligence-8259121a7fc5)
+- 🧠 Medium Blog: [How I Built by Alter Ego in AI](https://medium.com/@rkakde/how-i-built-my-alter-ego-in-artificial-intelligence-8259121a7fc5)
