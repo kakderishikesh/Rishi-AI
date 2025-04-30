@@ -79,7 +79,7 @@ All in a **concise, friendly, and professional tone**.
 | OpenAI moderation filtering user prompts | Used `/api/moderate.ts` and guardrails with fallback messages |
 | Supabase logs misclassifying starter prompts | Added logic to check against valid prompts and assign accurately |
 | Admin dashboard risk of exposure | Built as a separate local-only Vite app |
-| Preview image showing "Lovable Project" | Customized `index.html` with Open Graph and Twitter meta tags |
+| Preview image not showing Open Graph | Customized `index.html` with Open Graph and Twitter meta tags |
 | Vercel deployment failed to show previews | Fixed with `vercel.json` header rules and proper CDN hosting of image |
 | Sidebar lacked branding | Added avatar, GitHub/LinkedIn buttons, and a disclaimer |
 
@@ -103,4 +103,4 @@ Rishi AI may log anonymized user queries and responses for continuous improvemen
 - 📧 Email: rishikesh.kakde59@gmail.com
 - 🌐 Website: [rishikeshkakde.framer.website](https://rishikeshkakde.framer.website)
 - 💼 LinkedIn: [linkedin.com/in/rishikeshkakde](https://linkedin.com/in/rishikeshkakde)
-- 🧠 Medium Blog: [Rishi AI Build](https://medium.com) *(placeholder)*
+- 🧠 Medium Blog: [Rishi AI Build](https://medium.com/@rkakde/how-i-built-my-alter-ego-in-artificial-intelligence-8259121a7fc5)
