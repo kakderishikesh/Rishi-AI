@@ -1,73 +1,40 @@
-# Welcome to your Lovable project
+# Rishi AI Chat UI
 
-## Project info
+This repository contains the **frontend UI** for [Rishi AI](https://github.com/kakderishikesh/Rishi-AI), a personalized AI assistant designed to help recruiters, collaborators, and visitors learn more about Rishikesh Kakde.
 
-**URL**: https://lovable.dev/projects/3a1ed0d2-e925-4f65-b860-55b3e114e568
+🧠 **Note:** This repo includes only the **chat interface** built using **React**, **TypeScript**, and **TailwindCSS**. It does **not** contain the backend logic or OpenAI assistant configuration.
 
-## How can I edit this code?
+> For the full project including AI assistant setup, backend logic, and deployment details, visit the main repository:
+> [https://github.com/kakderishikesh/Rishi-AI](https://github.com/kakderishikesh/Rishi-AI)
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3a1ed0d2-e925-4f65-b860-55b3e114e568) and start prompting.
+- Clean and responsive UI
+- Chat interface powered by OpenAI API
+- Starter prompts and guided conversations
+- Typing animation and loading state
+- Markdown + code highlighting support
+- Accessible dark mode toggle
+- Sidebar with links, avatar, and disclaimers
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
+- React + TypeScript
 - Tailwind CSS
+- React Markdown with syntax highlighting
+- Vite for fast builds and development
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/3a1ed0d2-e925-4f65-b860-55b3e114e568) and click on Share -> Publish.
+## Getting Started
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+# Install dependencies
+npm install
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+# Start local development
+npm run dev
