@@ -41,7 +41,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     let runStatus = run.status;
     while (runStatus !== "completed") {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const updatedRun = await openai.beta.threads.runs.retrieve(currentThreadId, run.id);
+      const updatedRun = await openai.beta.threads.runs.retrieve(run.id, { thread_id: currentThreadId });
       runStatus = updatedRun.status;
 
       if (runStatus === "failed" || runStatus === "expired") {
